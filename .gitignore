@@ -1,0 +1,11 @@
+data/
+Models
+*.xml
+*.json
+settings.conf
+venv/
+*.bak
+*.old
+__pycache__
+*.code-workspace
+.DS_Store
