@@ -21,13 +21,19 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 import pickle
 
-def clean_data(review):
-    
-    no_punc = re.sub(r'[^\w\s]', '', review)
-    no_digits = ''.join([i for i in no_punc if not i.isdigit()])
-    
-    return(no_digits)
 
+def remove_all_non_alpha(input_text: str):
+    return ''.join([i for i in input_text if (i.isalpha() or i in [" ", "'"])])
+def text_cleanup(input_text):
+    return remove_all_non_alpha(input_text.replace("\n", " ").strip().strip("\n").replace("\t", " "))
+
+def loadall(filename):
+    with open(filename, "rb") as f:
+        while True:
+            try:
+                yield pickle.load(f)
+            except EOFError:
+                break
 
 def ParseArgs() :
     parser = argparse.ArgumentParser(

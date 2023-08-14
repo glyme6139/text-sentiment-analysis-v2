@@ -7,15 +7,18 @@ args = ParseArgs()
 def main() :
 
     lr = LogisticRegression(solver='liblinear')
+
+    tfidf = TfidfVectorizer(strip_accents=None, 
+                            lowercase=False,
+                            preprocessor=None)
+    
     if args.model :
-        lr = pickle.load(lr, open(args.model, 'rb'))
+        model = list(loadall(args.model))[0]
+        lr = model[0]
+        tfidf = model[1]
     if args.train :
         data = pd.read_csv(args.train)
 
-        tfidf = TfidfVectorizer(strip_accents=None, 
-                                lowercase=False,
-                                preprocessor=None)
-        
         X = tfidf.fit_transform(data['text'].values.astype('U'))
 
 
@@ -25,11 +28,11 @@ def main() :
         preds = lr.predict(X_test) # make predictions
         print(f"Model accuracy on test data : {accuracy_score(preds,y_test)}")
     if args.save :
-        pickle.dump(lr, open(args.save, 'wb'))
+        pickle.dump([lr,tfidf], open(args.save, 'wb'))
     if (args.model or args.train) :
         while True :
             text = [input(">> ")]
-            print(f"Model predicted {'positive' if lr.predict(tfidf.transform(clean_data(text))) == 1 else 'negative'}")
+            print(f"Model predicted {'positive' if lr.predict(tfidf.transform(text)) == 1 else 'negative'}")
             
 
 
